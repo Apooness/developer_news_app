@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/data/http.dart';
+import 'package:news_app/views/setting_page.dart';
 import 'package:webfeed/domain/rss_feed.dart';
+
+import 'detail_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -23,6 +26,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("News"),
+        actions: [
+          IconButton(icon: Icon(Icons.settings), onPressed: () => goToSettingPage()),
+        ],
       ),
       body: FutureBuilder(
         future: _service.getNews(),
@@ -40,36 +46,54 @@ class _HomePageState extends State<HomePage> {
             itemCount: snapshot.data.items.length,
             itemBuilder: (BuildContext context, int index) {
               final news = snapshot.data.items[index];
-              return Card(
-                child: Row(
-                  children: [
-                    Image(
-                      fit: BoxFit.cover,
-                      height: 100,
-                      width: 150,
-                      image: NetworkImage(news.enclosure.url),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        news.title,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 5,
-                      ),
-                    ),
-                  ],
+              return InkWell(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => DetailPage(url: news.link),
+                  ),
                 ),
-                // leading: Image(
-                //   image: NetworkImage(news.enclosure.url),
-                // ),
-                // title: Text(news.title),
+                child: Card(
+                  child: Row(
+                    children: [
+                      Image(
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 150,
+                        image: NetworkImage(news.enclosure.url),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          news.title,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
-            // separatorBuilder: (BuildContext context, int index) {
-            //   return Divider();
-            // },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.refresh),
+        onPressed: () {
+          setState(() {
+            _service.getNews();
+          });
+        },
+      ),
+    );
+  }
+
+  goToSettingPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => SettingPage(),
       ),
     );
   }
