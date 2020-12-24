@@ -33,18 +33,33 @@ class _SignInPageState extends State<SignInPage> {
             Flex(
               direction: Axis.vertical,
               children: [
-                buildFormField(
+                Form(
                   key: _emailKey,
-                  label: "Email",
-                  validator: validateEmail(_emailController.text),
-                  controller: _emailController,
+                  child: TextFormField(
+                    controller: _emailController,
+                    validator: (value) => validateEmail(value),
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 24),
-                buildFormField(
+                SizedBox(height: 12),
+                Form(
                   key: _passKey,
-                  label: "Password",
-                  validator: validatePassword(_passController.text),
-                  controller: _passController,
+                  child: TextFormField(
+                    controller: _passController,
+                    validator: (value) => validatePassword(value),
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 24),
                 buildSignInButton(),
@@ -86,7 +101,6 @@ class _SignInPageState extends State<SignInPage> {
       onPressed: () {
         if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
           _signInEmail();
-          print("oldu");
         } else {}
       },
       text: "Giriş Yap",
@@ -138,6 +152,7 @@ class _SignInPageState extends State<SignInPage> {
           content: Text("Hoş Geldiniz ${user.email}"),
         ),
       );
+      Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

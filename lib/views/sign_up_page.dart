@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 
+import 'home_page.dart';
+
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
 
@@ -28,25 +30,46 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
         child: Column(
           children: [
-            buildFormField(
+            Form(
               key: _emailKey,
-              label: "Email",
-              validator: validateEmail(_emailController.text),
-              controller: _emailController,
+              child: TextFormField(
+                controller: _emailController,
+                validator: (String value) => validateEmail(value),
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 12),
-            buildFormField(
-              secure: true,
+            Form(
               key: _passKey,
-              label: "Password",
-              validator: validatePassword(_passController.text),
-              controller: _passController,
+              child: TextFormField(
+                obscureText: true,
+                controller: _passController,
+                validator: (String value) => validatePassword(value),
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 12),
-            buildFormField(
-              controller: _nameController,
+            Form(
               key: _nameKey,
-              label: "Name",
+              child: TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: "İsim",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 12),
             SignInButtonBuilder(
@@ -55,37 +78,14 @@ class _SignUpPageState extends State<SignUpPage> {
               icon: Icons.person_add,
               onPressed: () {
                 if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
-                  print("oldu");
+                  print("validate");
+                  _registerNew();
                 } else {
                   print("olmadı");
                 }
-                _registerNew();
               },
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Form buildFormField({
-    final key,
-    final validator,
-    final label,
-    final controller,
-    final secure = false,
-  }) {
-    return Form(
-      key: key,
-      child: TextFormField(
-        obscureText: secure,
-        controller: controller,
-        validator: (value) => validator,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
         ),
       ),
     );
@@ -96,7 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value))
-      return 'Geçerli Bir Email Giriniz';
+      return ('Geçerli Bir Email Giriniz');
     else
       return null;
   }
@@ -104,6 +104,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String validatePassword(String value) {
     if (value.isEmpty) {
       return "Bu Kısım Boş Bırakılamaz";
+    } else if (value.length < 6) {
+      return "Şifre en az 6 karakter olmalıdır";
     } else {
       return null;
     }
@@ -123,6 +125,14 @@ class _SignUpPageState extends State<SignUpPage> {
             content: Text("Merhaba ${_nameController.text}"),
           ),
         );
+
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomePage(),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -132,9 +142,17 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Hata: Zayıf Parola"),
+          ),
+        );
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Hata. Bu Email Kullanılmaktadır"),
+          ),
+        );
       }
     } catch (er) {
       print(er);
