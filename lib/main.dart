@@ -1,9 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:news_app/views/setting_page.dart';
 
-import 'views/developer_info.dart';
-import 'views/main_page.dart';
+import 'views/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +20,7 @@ class MyApp extends StatelessWidget {
           color: Colors.green,
         ),
       ),
-      home: MainPage(),
+      home: HomePage(),
     );
   }
 }

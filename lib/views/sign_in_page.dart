@@ -79,7 +79,6 @@ class _SignInPageState extends State<SignInPage> {
                       Buttons.GoogleDark,
                       onPressed: () {
                         signInGmail();
-                        //TODO: SAYFA DEĞİŞTİRME
                       },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
