@@ -56,6 +56,7 @@ class SettingPage extends StatelessWidget {
                   icon: Icons.logout,
                   onPressed: () {
                     _auth.signOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

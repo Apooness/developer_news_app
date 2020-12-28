@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "555304026795-edg4s3nh9au6cqhvp033qu6jkt8ievnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.akil.news_app",
+            "certificate_hash": "cc1479deb329370d4f0dac7511c72ff5d00d3bdf"
+          }
+        },
+        {
           "client_id": "555304026795-qb3bk0s2mps9r3tg269pkukvj6ad9aq5.apps.googleusercontent.com",
           "client_type": 3
         }

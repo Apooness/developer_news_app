@@ -13,7 +13,7 @@ class DetailPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.share),
-            onPressed: share,
+            onPressed: _share,
           ),
         ],
       ),
@@ -24,7 +24,7 @@ class DetailPage extends StatelessWidget {
     );
   }
 
-  Future<void> share() async {
+  Future<void> _share() async {
     final title = "Deneme";
 
     await FlutterShare.share(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/data/http.dart';
 import 'package:news_app/views/setting_page.dart';
 import 'package:webfeed/domain/rss_feed.dart';
+import 'package:turkish/turkish.dart';
 
 import 'detail_page.dart';
 
@@ -131,30 +132,41 @@ class _HomePageState extends State<HomePage> {
 
         return ListView.builder(
           itemCount: snapshot.data.items.length,
+          // ignore: missing_return
           itemBuilder: (BuildContext context, int index) {
+            final lowerSearch = turkish.toLowerCase(_searchController.text);
+            final lowerNewsTitle = turkish.toLowerCase(snapshot.data.items[index].title);
             if (_searchController.text != null) {
-              if (snapshot.data.items[index].title
-                  .toLowerCase()
-                  .contains(_searchController.text.toLowerCase())) {
+              if (lowerNewsTitle.contains(lowerSearch)) {
                 final news = snapshot.data.items[index];
-                return Card(
-                  child: Row(
-                    children: [
-                      Image(
-                        fit: BoxFit.cover,
-                        height: 100,
-                        width: 150,
-                        image: NetworkImage(news.enclosure.url),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => DetailPage(url: news.link),
                       ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          news.title,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 5,
+                    );
+                  },
+                  child: Card(
+                    child: Row(
+                      children: [
+                        Image(
+                          fit: BoxFit.cover,
+                          height: 100,
+                          width: 150,
+                          image: NetworkImage(news.enclosure.url),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            news.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }

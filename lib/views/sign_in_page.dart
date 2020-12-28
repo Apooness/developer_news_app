@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:news_app/navigation/slide_route.dart';
 
 import 'home_page.dart';
 
@@ -65,28 +66,11 @@ class _SignInPageState extends State<SignInPage> {
                 buildSignInButton(),
               ],
             ),
-            Flex(
-              direction: Axis.vertical,
-              children: [
-                Container(
-                  height: 100,
-                  width: 200,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: SignInButton(
-                      Buttons.GoogleDark,
-                      onPressed: () {
-                        signInGmail();
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+            SignInButton(
+              Buttons.GoogleDark,
+              onPressed: () {
+                signInGmail();
+              },
             )
           ],
         ),
@@ -152,12 +136,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
       Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => HomePage(),
-        ),
-      );
+      Navigator.pushReplacement(context, SlideRightRoute(page: HomePage()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -189,5 +168,7 @@ class _SignInPageState extends State<SignInPage> {
         content: Text("Hoşgeldin ${user.displayName}"),
       ),
     );
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.pushReplacement(context, SlideRightRoute(page: HomePage()));
   }
 }
