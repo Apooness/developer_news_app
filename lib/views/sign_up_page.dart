@@ -120,7 +120,7 @@ class _SignUpPageState extends State<SignUpPage> {
       final User user = userCredential.user;
 
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        Scaffold.of(context).showSnackBar(
           SnackBar(
             content: Text("Merhaba ${_nameController.text}"),
           ),
@@ -134,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        Scaffold.of(context).showSnackBar(
           SnackBar(
             content: Text("Hata Oldu"),
           ),
@@ -142,13 +142,13 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
+        Scaffold.of(context).showSnackBar(
           SnackBar(
             content: Text("Hata: Zayıf Parola"),
           ),
         );
       } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
+        Scaffold.of(context).showSnackBar(
           SnackBar(
             content: Text("Hata. Bu Email Kullanılmaktadır"),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:news_app/navigation/slide_route.dart';
+import 'package:news_app/services/auth_service.dart';
 
 import 'home_page.dart';
 
@@ -19,10 +20,13 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthService _authService = AuthService();
+  GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Giriş Yap"),
       ),
@@ -63,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
                 SizedBox(height: 24),
-                buildSignInButton(),
+                buildSignInButton(context),
               ],
             ),
             SignInButton(
@@ -78,12 +82,12 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  SignInButtonBuilder buildSignInButton() {
+  Widget buildSignInButton(BuildContext context) {
     return SignInButtonBuilder(
       backgroundColor: Colors.grey[600],
       onPressed: () {
         if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
-          _signInEmail();
+          _signInEmail(context);
         } else {}
       },
       text: "Giriş Yap",
@@ -91,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Form buildFormField({final key, final validator, final label, final controller}) {
+  Widget buildFormField({final key, final validator, final label, final controller}) {
     return Form(
       key: key,
       child: TextFormField(
@@ -125,33 +129,15 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _signInEmail() async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: _emailController.text, password: _passController.text);
-      final User user = userCredential.user;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Hoş Geldiniz ${user.email}"),
-        ),
-      );
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.pushReplacement(context, SlideRightRoute(page: HomePage()));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Hata: Kullanıcı Bulunamadı"),
-          ),
-        );
-      } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Hata: Şifre Hatalı"),
-          ),
-        );
-      }
-    }
+  _signInEmail(BuildContext context) async {
+    final message = await _authService.signInWithEmailandPassword(
+      context: context,
+      email: _emailController.text,
+      password: _passController.text,
+    );
+    Scaffold.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   void signInGmail() async {
@@ -163,11 +149,13 @@ class _SignInPageState extends State<SignInPage> {
     );
     final UserCredential userCredential = await _auth.signInWithCredential(credential);
     final User user = userCredential.user;
-    ScaffoldMessenger.of(context).showSnackBar(
+
+    Scaffold.of(context).showSnackBar(
       SnackBar(
         content: Text("Hoşgeldin ${user.displayName}"),
       ),
     );
+
     Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.pushReplacement(context, SlideRightRoute(page: HomePage()));
   }
