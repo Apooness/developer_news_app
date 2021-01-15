@@ -1,6 +1,6 @@
 # news_app
 
-A new Flutter project.
+A new Flutter project. You have to be dev channel for some features
 
 ## Getting Started
 
