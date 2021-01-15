@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_builder.dart';
-
-import 'home_page.dart';
+import 'package:news_app/services/auth_service.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
@@ -12,12 +11,10 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthService _authService = AuthService();
   final _emailKey = GlobalKey<FormState>();
   final _passKey = GlobalKey<FormState>();
-  final _nameKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
   TextEditingController _passController = TextEditingController();
 
   @override
@@ -59,35 +56,27 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             SizedBox(height: 12),
-            Form(
-              key: _nameKey,
-              child: TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: "İsim",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            SignInButtonBuilder(
-              backgroundColor: Colors.grey,
-              text: "Kayıt Ol",
-              icon: Icons.person_add,
-              onPressed: () {
-                if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
-                  print("validate");
-                  _registerNew();
-                } else {
-                  print("olmadı");
-                }
-              },
-            ),
+            buildSignUpButtonBuilder(context),
           ],
         ),
       ),
+    );
+  }
+
+  SignInButtonBuilder buildSignUpButtonBuilder(BuildContext context) {
+    return SignInButtonBuilder(
+      backgroundColor: Colors.grey,
+      text: "Kayıt Ol",
+      icon: Icons.person_add,
+      onPressed: () {
+        if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
+          _authService.registerNew(
+            context: context,
+            email: _emailController.text,
+            password: _passController.text,
+          );
+        } else {}
+      },
     );
   }
 
@@ -108,54 +97,6 @@ class _SignUpPageState extends State<SignUpPage> {
       return "Şifre en az 6 karakter olmalıdır";
     } else {
       return null;
-    }
-  }
-
-  void _registerNew() async {
-    try {
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passController.text,
-      );
-      final User user = userCredential.user;
-
-      if (user != null) {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Merhaba ${_nameController.text}"),
-          ),
-        );
-
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => HomePage(),
-          ),
-        );
-      } else {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Hata Oldu"),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Hata: Zayıf Parola"),
-          ),
-        );
-      } else if (e.code == 'email-already-in-use') {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Hata. Bu Email Kullanılmaktadır"),
-          ),
-        );
-      }
-    } catch (er) {
-      print(er);
     }
   }
 }
