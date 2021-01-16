@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/navigation/slide_route.dart';
+
+import 'navigation/slide_route.dart';
 
 class NavigationService {
   replaceNewPage({final newPage, final context}) {
