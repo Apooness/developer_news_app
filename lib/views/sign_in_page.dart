@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:news_app/services/auth_service.dart';
+import 'package:news_app/services/validator_service.dart';
 import 'package:news_app/states/sncakbar_message_state.dart';
+import 'package:news_app/views/widgets/form_field.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -12,8 +14,10 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final _emailKey = GlobalKey<FormState>();
-  final _passKey = GlobalKey<FormState>();
+  ValidatorService _validator = ValidatorService();
+
+  GlobalKey<FormState> _emailKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _passKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   AuthService _authService = AuthService();
@@ -23,9 +27,7 @@ class _SignInPageState extends State<SignInPage> {
     return Consumer<SnackBarMessage>(
       builder: (BuildContext context, value, Widget child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Giriş Yap"),
-          ),
+          appBar: _appBar,
           body: Padding(
             padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
             child: Column(
@@ -34,48 +36,43 @@ class _SignInPageState extends State<SignInPage> {
                 Flex(
                   direction: Axis.vertical,
                   children: [
-                    Form(
-                      key: _emailKey,
-                      child: TextFormField(
-                        controller: _emailController,
-                        validator: (value) => validateEmail(value),
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                      ),
+                    BuildFormField(
+                      controller: _emailController,
+                      formKey: _emailKey,
+                      label: "Email",
+                      secure: false,
+                      validator: (email) => _validator.validateEmail(email),
                     ),
                     SizedBox(height: 12),
-                    Form(
-                      key: _passKey,
-                      child: TextFormField(
-                        controller: _passController,
-                        validator: (value) => validatePassword(value),
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                      ),
+                    BuildFormField(
+                      controller: _passController,
+                      formKey: _passKey,
+                      label: "Password",
+                      secure: true,
+                      validator: (password) => _validator.validatePassword(password),
                     ),
                     SizedBox(height: 24),
                     buildSignInButton(),
                   ],
                 ),
-                SignInButton(
-                  Buttons.GoogleDark,
-                  onPressed: () {
-                    _authService.signInGmail(context: context);
-                  },
-                )
+                signInWithGoogleButton(context)
               ],
             ),
           ),
         );
+      },
+    );
+  }
+
+  AppBar get _appBar => AppBar(
+        title: Text("Giriş Yap"),
+      );
+
+  SignInButton signInWithGoogleButton(BuildContext context) {
+    return SignInButton(
+      Buttons.GoogleDark,
+      onPressed: () {
+        _authService.signInGmail(context: context);
       },
     );
   }
@@ -95,39 +92,5 @@ class _SignInPageState extends State<SignInPage> {
       text: "Giriş Yap",
       icon: Icons.email,
     );
-  }
-
-  Widget buildFormField({final key, final validator, final label, final controller}) {
-    return Form(
-      key: key,
-      child: TextFormField(
-        controller: controller,
-        validator: (value) => validator(value),
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-        ),
-      ),
-    );
-  }
-
-  String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = RegExp(pattern);
-    if (!regex.hasMatch(value))
-      return 'Geçerli Bir Email Giriniz';
-    else
-      return null;
-  }
-
-  String validatePassword(String value) {
-    if (value.isEmpty) {
-      return "Bu Kısım Boş Bırakılamaz";
-    } else {
-      return null;
-    }
   }
 }
