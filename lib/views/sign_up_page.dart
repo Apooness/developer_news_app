@@ -27,22 +27,10 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
         child: Column(
           children: [
-            BuildFormField(
-              controller: _emailController,
-              formKey: _emailKey,
-              label: "Email",
-              secure: false,
-              validator: (email) => _validator.validateEmail(email),
-            ),
-            SizedBox(height: 12),
-            BuildFormField(
-              controller: _passController,
-              formKey: _passKey,
-              label: "Password",
-              secure: true,
-              validator: (password) => _validator.validatePassword(password),
-            ),
-            SizedBox(height: 12),
+            _emailField,
+            _emptyHeight,
+            _passwordField,
+            _emptyHeight,
             buildSignUpButtonBuilder(context),
           ],
         ),
@@ -50,26 +38,40 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget get _appBar {
-    return AppBar(
-      title: Text("Kayıt Ol"),
-    );
-  }
+  Widget get _appBar => AppBar(
+        title: Text("Kayıt Ol"),
+      );
 
-  SignInButtonBuilder buildSignUpButtonBuilder(BuildContext context) {
-    return SignInButtonBuilder(
-      backgroundColor: Colors.grey,
-      text: "Kayıt Ol",
-      icon: Icons.person_add,
-      onPressed: () {
-        if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
-          _authService.registerNew(
-            context: context,
-            email: _emailController.text,
-            password: _passController.text,
-          );
-        } else {}
-      },
-    );
-  }
+  Widget get _emailField => BuildFormField(
+        controller: _emailController,
+        formKey: _emailKey,
+        label: "Email",
+        secure: false,
+        validator: (email) => _validator.validateEmail(email),
+      );
+
+  Widget get _emptyHeight => SizedBox(height: 12);
+
+  Widget get _passwordField => BuildFormField(
+        controller: _passController,
+        formKey: _passKey,
+        label: "Password",
+        secure: true,
+        validator: (password) => _validator.validatePassword(password),
+      );
+
+  Widget buildSignUpButtonBuilder(BuildContext context) => SignInButtonBuilder(
+        backgroundColor: Colors.grey,
+        text: "Kayıt Ol",
+        icon: Icons.person_add,
+        onPressed: () {
+          if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
+            _authService.registerNew(
+              context: context,
+              email: _emailController.text,
+              password: _passController.text,
+            );
+          } else {}
+        },
+      );
 }

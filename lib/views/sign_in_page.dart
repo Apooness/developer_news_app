@@ -36,22 +36,10 @@ class _SignInPageState extends State<SignInPage> {
                 Flex(
                   direction: Axis.vertical,
                   children: [
-                    BuildFormField(
-                      controller: _emailController,
-                      formKey: _emailKey,
-                      label: "Email",
-                      secure: false,
-                      validator: (email) => _validator.validateEmail(email),
-                    ),
-                    SizedBox(height: 12),
-                    BuildFormField(
-                      controller: _passController,
-                      formKey: _passKey,
-                      label: "Password",
-                      secure: true,
-                      validator: (password) => _validator.validatePassword(password),
-                    ),
-                    SizedBox(height: 24),
+                    _emailField,
+                    _emptyHeight,
+                    _passwordField,
+                    _emptyHeight,
                     buildSignInButton(),
                   ],
                 ),
@@ -64,33 +52,47 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  AppBar get _appBar => AppBar(
+  Widget get _appBar => AppBar(
         title: Text("Giriş Yap"),
       );
 
-  SignInButton signInWithGoogleButton(BuildContext context) {
-    return SignInButton(
-      Buttons.GoogleDark,
-      onPressed: () {
-        _authService.signInGmail(context: context);
-      },
-    );
-  }
+  Widget get _emailField => BuildFormField(
+        controller: _emailController,
+        formKey: _emailKey,
+        label: "Email",
+        secure: false,
+        validator: (email) => _validator.validateEmail(email),
+      );
 
-  Widget buildSignInButton() {
-    return SignInButtonBuilder(
-      backgroundColor: Colors.grey[600],
-      onPressed: () async {
-        if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
-          await _authService.signInWithEmailandPassword(
-            context: context,
-            email: _emailController.text,
-            password: _passController.text,
-          );
-        } else {}
-      },
-      text: "Giriş Yap",
-      icon: Icons.email,
-    );
-  }
+  Widget get _emptyHeight => SizedBox(height: 16);
+
+  Widget get _passwordField => BuildFormField(
+        controller: _passController,
+        formKey: _passKey,
+        label: "Password",
+        secure: true,
+        validator: (password) => _validator.validatePassword(password),
+      );
+
+  SignInButton signInWithGoogleButton(BuildContext context) => SignInButton(
+        Buttons.GoogleDark,
+        onPressed: () {
+          _authService.signInGmail(context: context);
+        },
+      );
+
+  Widget buildSignInButton() => SignInButtonBuilder(
+        backgroundColor: Colors.grey[600],
+        onPressed: () async {
+          if (_emailKey.currentState.validate() && _passKey.currentState.validate()) {
+            await _authService.signInWithEmailandPassword(
+              context: context,
+              email: _emailController.text,
+              password: _passController.text,
+            );
+          } else {}
+        },
+        text: "Giriş Yap",
+        icon: Icons.email,
+      );
 }

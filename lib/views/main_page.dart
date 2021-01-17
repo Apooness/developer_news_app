@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_builder.dart';
+import 'package:news_app/services/navigation_service.dart';
 import 'package:news_app/views/sign_in_page.dart';
 import 'package:news_app/views/sign_up_page.dart';
+import 'package:news_app/views/widgets/custom_container.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    NavigationService _navigator = NavigationService();
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Hoş Geldiniz"),
-      ),
+      appBar: _appBar,
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
         child: Column(
@@ -19,59 +21,19 @@ class MainPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  color: Colors.black,
-                  child: Image.asset(
-                    "assets/multicamp-logo.png",
-                    height: 150,
-                    width: 150,
-                  ),
-                ),
-                SizedBox(width: 30),
-                Container(
-                  height: 150,
-                  width: 150,
-                  color: Colors.black,
-                  child: FlutterLogo(),
-                )
+                customContainer(Colors.black, 150, 150, Image.asset("assets/multicamp-logo.png")),
+                space(width: 30),
+                customContainer(Colors.black, 150, 150, FlutterLogo())
               ],
             ),
-            SizedBox(height: 100),
+            space(height: 100),
             Expanded(
-              child: Container(
-                child: Column(
-                  children: [
-                    SignInButtonBuilder(
-                      height: 50,
-                      backgroundColor: Colors.orange,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => SignInPage(),
-                          ),
-                        );
-                      },
-                      text: "Giriş ",
-                      icon: Icons.email,
-                    ),
-                    SizedBox(height: 50),
-                    SignInButtonBuilder(
-                      height: 50,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => SignUpPage(),
-                          ),
-                        );
-                      },
-                      backgroundColor: Colors.blue,
-                      text: "Kayıt Ol",
-                      icon: Icons.person_add,
-                    ),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  _signInButton(_navigator, context),
+                  SizedBox(height: 50),
+                  _signUpButton(_navigator, context),
+                ],
               ),
             )
           ],
@@ -79,4 +41,30 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget get _appBar => AppBar(
+        title: Text("Hoş Geldiniz"),
+      );
+
+  Widget _signUpButton(NavigationService _navigator, BuildContext context) => SignInButtonBuilder(
+        height: 50,
+        onPressed: () {
+          _navigator.goToNewPage(context: context, newPage: SignUpPage());
+        },
+        backgroundColor: Colors.blue,
+        text: "Kayıt Ol",
+        icon: Icons.person_add,
+      );
+
+  Widget _signInButton(NavigationService _navigator, BuildContext context) => SignInButtonBuilder(
+        height: 50,
+        backgroundColor: Colors.orange,
+        onPressed: () {
+          _navigator.goToNewPage(context: context, newPage: SignInPage());
+        },
+        text: "Giriş ",
+        icon: Icons.email,
+      );
+
+  Widget space({double width = 0, double height = 0}) => SizedBox(width: width, height: height);
 }

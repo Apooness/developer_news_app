@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/services/navigation_service.dart';
 import 'package:news_app/states/theme_state.dart';
+import 'package:news_app/views/widgets/custom_raised_button.dart';
 import 'package:news_app/views/widgets/theme_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +17,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Settings"),
-      ),
+      appBar: _appbar,
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 100),
         child: Column(
@@ -27,57 +26,15 @@ class SettingPage extends StatelessWidget {
             Flex(
               direction: Axis.vertical,
               children: [
-                RaisedButton(
-                  onPressed: () =>
-                      _navigator.goToNewPage(context: context, newPage: DeveloperPage()),
-                  child: Text(
-                    "Geliştirici",
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
-                Consumer<ThemeState>(
-                  builder: (BuildContext context, value, Widget child) {
-                    return RaisedButton(
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => ThemeDialog(value: value),
-                      ),
-                      child: Text(
-                        "Tema",
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    );
-                  },
-                ),
+                goToDevPage(context),
+                openThemeDialog(),
               ],
             ),
             Flex(
               direction: Axis.vertical,
               children: [
-                Text(
-                  "Sürüm: 1.0",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
-                ),
-                RaisedButton(
-                  child: Row(
-                    children: [
-                      Icon(Icons.logout),
-                      SizedBox(width: 10),
-                      Text(
-                        "Çıkış Yap",
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    _auth.signOut();
-                    _navigator.replaceNewPage(context: context, newPage: MainPage());
-                  },
-                ),
+                versionInfo(context),
+                logOutButton(context),
               ],
             ),
           ],
@@ -85,4 +42,52 @@ class SettingPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget get _appbar => AppBar(
+        title: Text("Settings"),
+      );
+
+  Widget goToDevPage(BuildContext context) => customRaisedButton(
+      child: Text(
+        "Geliştirici",
+        style: Theme.of(context).textTheme.button,
+      ),
+      onPressed: () => _navigator.goToNewPage(context: context, newPage: DeveloperPage()));
+
+  Widget openThemeDialog() => Consumer<ThemeState>(
+        builder: (BuildContext context, value, Widget child) {
+          return customRaisedButton(
+            child: Text(
+              "Tema",
+              style: Theme.of(context).textTheme.button,
+            ),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => ThemeDialog(value: value),
+            ),
+          );
+        },
+      );
+
+  Widget versionInfo(BuildContext context) => Text(
+        "Sürüm: 1.0",
+        style: Theme.of(context).textTheme.headline1.copyWith(color: Theme.of(context).accentColor),
+      );
+
+  Widget logOutButton(BuildContext context) => customRaisedButton(
+        child: Row(
+          children: [
+            Icon(Icons.logout),
+            SizedBox(width: 10),
+            Text(
+              "Çıkış Yap",
+              style: Theme.of(context).textTheme.button,
+            ),
+          ],
+        ),
+        onPressed: () {
+          _auth.signOut();
+          _navigator.replaceNewPage(context: context, newPage: MainPage());
+        },
+      );
 }

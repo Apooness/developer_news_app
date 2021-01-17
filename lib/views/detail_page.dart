@@ -9,20 +9,24 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: _share,
-          ),
-        ],
-      ),
+      appBar: _appbar,
       body: WebView(
         initialUrl: url,
         javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
+
+  Widget get _appbar => AppBar(
+        actions: [
+          _shareIcon,
+        ],
+      );
+
+  Widget get _shareIcon => IconButton(
+        icon: Icon(Icons.share),
+        onPressed: _share,
+      );
 
   Future<void> _share() async {
     final title = "Deneme";

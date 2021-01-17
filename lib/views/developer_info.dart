@@ -9,9 +9,7 @@ class DeveloperPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Geliştirici"),
-      ),
+      appBar: _appbar,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,6 +39,12 @@ class DeveloperPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget get _appbar {
+    return AppBar(
+      title: Text("Geliştirici"),
     );
   }
 
