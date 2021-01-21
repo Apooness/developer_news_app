@@ -14,12 +14,10 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   HttpService _service;
-  TextEditingController _searchController;
 
   @override
   void initState() {
     _service = HttpService();
-    _searchController = TextEditingController();
     super.initState();
   }
 
@@ -27,18 +25,8 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(hintText: "Ara"),
-        ),
+        title: Text("Haberler"),
         actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                setState(() {
-                  getNews();
-                });
-              }),
           IconButton(icon: Icon(Icons.settings), onPressed: () => goToSettingPage()),
         ],
       ),
