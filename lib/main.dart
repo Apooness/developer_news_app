@@ -1,13 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app/states/news_state.dart';
 import 'package:news_app/states/sncakbar_message_state.dart';
 import 'package:news_app/states/theme_state.dart';
-import 'package:news_app/views/splash_page.dart';
 import 'package:provider/provider.dart';
 
-import 'views/detail_page.dart';
-import 'views/developer_info.dart';
-import 'views/main_page.dart';
+import 'views/news_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +15,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => SnackBarMessage()),
         ChangeNotifierProvider(create: (_) => ThemeState()),
+        ChangeNotifierProvider<NewsState>(create: (context) => NewsState()..getRss()),
       ],
       child: MyApp(),
     ),
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Akil Haber',
       theme: Provider.of<ThemeState>(context).themeData,
-      home: SplashScreen(),
+      home: NewsPage(),
     );
   }
 }

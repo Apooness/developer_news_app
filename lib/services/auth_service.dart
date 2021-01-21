@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:news_app/services/navigation_service.dart';
 import 'package:news_app/states/sncakbar_message_state.dart';
-import 'package:news_app/views/home_page.dart';
+import 'package:news_app/views/news_page.dart';
 import 'package:news_app/views/widgets/snackbar.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +24,7 @@ class AuthService {
       value.changeSnackbarMessage("Hoş Geldiniz ${user.email}");
 
       showSnackBar.scaffoldMessenger(context: context);
-      _navigator.goToNewPage(context: context, newPage: HomePage());
+      _navigator.goToNewPage(context: context, newPage: NewsPage());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         value.changeSnackbarMessage("Hata: Kullanıcı Bulunamadı");
@@ -53,7 +53,7 @@ class AuthService {
 
     showSnackBar.scaffoldMessenger(context: context);
 
-    _navigator.goToNewPage(context: context, newPage: HomePage());
+    _navigator.goToNewPage(context: context, newPage: NewsPage());
   }
 
   registerNew({BuildContext context, final email, final password}) async {
@@ -70,7 +70,7 @@ class AuthService {
       if (user != null) {
         value.changeSnackbarMessage("Merhaba $email");
         showSnackBar.scaffoldMessenger(context: context);
-        _navigator.goToNewPage(context: context, newPage: HomePage());
+        _navigator.goToNewPage(context: context, newPage: NewsPage());
       } else {
         value.changeSnackbarMessage("Hata Oldu");
         showSnackBar.scaffoldMessenger(context: context);
