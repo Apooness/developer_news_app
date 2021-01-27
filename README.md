@@ -1,6 +1,7 @@
 # news_app
 
-A new Flutter project. You have to be beta channel for some features
+A new Flutter project. 
+https://github.com/Apooness/News_App You can use this repo for better app and code.
 
 ## Getting Started
 
